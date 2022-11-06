@@ -1,6 +1,6 @@
 const {Schema,model,Types} = require('mongoose');
 
-//Reaction schema only, mongoose subdocument
+//Reaction schema only, mongoose subdocument for the reaction field in the thoughts model
 const reactionSchema = new Schema(
     {
         reactionId: {
@@ -17,5 +17,41 @@ const reactionSchema = new Schema(
             type: Date,
             default: Date.now,
           },
-    }
-)
+    },
+    {
+        toJSON: {
+          getters: true,
+        },
+        id: false,
+      }
+);
+
+//create thought schema/model
+
+const thoughtSchema = new Schema(
+    {
+        thoughtText: {
+            type: String,
+            required: true,
+            minlength: 1,
+            maxlength: 280,
+          },
+          createdAt: {
+            type: Date,
+            default: Date.now,
+          },
+        username: { type: String, required: true },
+        //an array of nested documents created with reactionSchema
+        reactios: [reactionSchema],
+    },
+    {
+        toJSON: {
+        virtuals: true,
+          getters: true,
+        },
+        id: false,
+      }
+);
+
+//a virtual called reactionCount that retreives the length of the thougt's reactions array field on query
+
